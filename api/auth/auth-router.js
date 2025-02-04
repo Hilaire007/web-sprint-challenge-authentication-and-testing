@@ -6,12 +6,10 @@ const { insert, getByUsername } = require("../users/user-model");
 
 const JWT_SECRET = process.env.JWT_SECRET || "secret";
 
-//let nextId = 1;
-
 function validateUser(req, res, next) {
   const { username, password } = req.body;
   if (!username || !password) {
-    return res.status(400).json({ message: "username and password required" });
+    return res.status(400).json("username and password required");
   }
   next();
 }
@@ -21,7 +19,7 @@ router.post("/register", validateUser, async (req, res, next) => {
     const { username, password } = req.body;
     const existingUser = await getByUsername(username);
     if (existingUser) {
-      return res.status(400).json({ message: "username taken" });
+      return res.status(400).json("username taken");
     }
 
     const rounds = 8;
@@ -40,7 +38,7 @@ router.post("/login", validateUser, async (req, res, next) => {
     const { username, password } = req.body;
     const user = await getByUsername(username);
     if (!user || !bcrypt.compareSync(password, user.password)) {
-      return res.status(401).json({ message: "invalid credentials" });
+      return res.status(401).json("invalid credentials");
     }
 
     const token = jwt.sign(
